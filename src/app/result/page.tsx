@@ -20,7 +20,7 @@ import {
 } from "recharts";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 
 type StyleKey =
   | "collaborating"
@@ -85,6 +85,30 @@ const styleDescriptions: Record<StyleKey, StyleInfo> = {
 };
 
 export default function ResultPage() {
+  return (
+    <Suspense fallback={<ResultPageLoading />}>
+      <ResultPageContent />
+    </Suspense>
+  );
+}
+
+// Loading component while suspense resolves
+function ResultPageLoading() {
+  return (
+    <main className="flex justify-center">
+      <div className="container max-w-4xl py-10">
+        <Card>
+          <CardContent className="p-6 text-center">
+            Loading results...
+          </CardContent>
+        </Card>
+      </div>
+    </main>
+  );
+}
+
+// Actual component content
+function ResultPageContent() {
   const searchParams = useSearchParams();
   const [chartData, setChartData] = useState<
     Array<{
@@ -94,9 +118,6 @@ export default function ResultPage() {
     }>
   >([]);
   const [primaryStyle, setPrimaryStyle] = useState<StyleKey | null>(null);
-
-  // We're keeping this variable but commenting out the state setter since it's not used
-  // const [secondaryStyle, setSecondaryStyle] = useState<StyleKey | null>(null);
 
   useEffect(() => {
     // Extract scores from URL params
@@ -144,23 +165,7 @@ export default function ResultPage() {
     if (sortedStyles.length > 0) {
       setPrimaryStyle(sortedStyles[0][0] as StyleKey);
     }
-    // Commenting out since this is not used
-    // if (sortedStyles.length > 1) {
-    //   setSecondaryStyle(sortedStyles[1][0] as StyleKey);
-    // }
   }, [searchParams]);
-
-  // Commenting out since this function is not used
-  // const getColorForStyle = (style: StyleKey): string => {
-  //   const colors = {
-  //     collaborating: "#F97316", // orange
-  //     competing: "#F97316", // orange
-  //     avoiding: "#F97316", // orange
-  //     accommodating: "#F97316", // orange
-  //     compromising: "#F97316", // orange
-  //   };
-  //   return colors[style];
-  // };
 
   if (!primaryStyle) {
     return (
