@@ -29,65 +29,11 @@ type StyleKey =
   | "accommodating"
   | "compromising";
 
-type StyleInfo = {
-  name: string;
-  description: string;
-  when_to_use: string;
-  when_to_avoid: string;
-};
-
-const styleDescriptions: Record<StyleKey, StyleInfo> = {
-  collaborating: {
-    name: "Collaborating",
-    description:
-      "You actively seek to find a solution that fully satisfies the concerns of all parties involved. This approach focuses on working together to find a win-win solution.",
-    when_to_use:
-      "When the relationship and outcome are both important, when you need buy-in from all parties, or when you need to work through hard feelings.",
-    when_to_avoid:
-      "When time is limited, when the issue is trivial, or when parties are not willing to collaborate.",
-  },
-  competing: {
-    name: "Competing",
-    description:
-      "You pursue your own concerns at the expense of another. This is a power-oriented approach where you use whatever power seems appropriate to win.",
-    when_to_use:
-      "When quick, decisive action is vital, on important issues where unpopular actions need implementing, or against people who take advantage of non-competitive behavior.",
-    when_to_avoid:
-      "When you need to build relationships, when you're outmatched in power, or when the situation requires a collaborative approach.",
-  },
-  avoiding: {
-    name: "Avoiding",
-    description:
-      "You do not immediately pursue your own concerns or those of the other person. You do not address the conflict. This might take the form of diplomatically sidestepping an issue or withdrawing from a threatening situation.",
-    when_to_use:
-      "When an issue is trivial, when more important issues are pressing, when you need time to cool down, or when you're in a no-win situation.",
-    when_to_avoid:
-      "When the issue is important, when it won't go away, or when immediate action is required.",
-  },
-  accommodating: {
-    name: "Accommodating",
-    description:
-      "You neglect your own concerns to satisfy the concerns of the other person. This approach includes an element of self-sacrifice. It might take the form of selfless generosity or charity, obeying another person's order when you would prefer not to, or yielding to another's point of view.",
-    when_to_use:
-      "When you realize you are wrong, when the issue is more important to others, when you want to build social credits for later issues, or when preserving harmony is especially important.",
-    when_to_avoid:
-      "When you will feel resentful, when safety is at stake, or when it enables bad behavior from the other person.",
-  },
-  compromising: {
-    name: "Compromising",
-    description:
-      "You find an expedient, mutually acceptable solution that partially satisfies both parties. It falls between competing and accommodating. Compromising gives up more than competing but less than accommodating.",
-    when_to_use:
-      "When goals are important but not worth the effort or potential disruption of more assertive approaches, when opponents with equal power are committed to mutually exclusive goals, or to achieve temporary settlements to complex issues.",
-    when_to_avoid:
-      "When more thorough problem-solving is needed for important issues, or when one party has significantly more power.",
-  },
-};
-
+// Main page component
 export default function ResultPage() {
   return (
     <Suspense fallback={<ResultPageLoading />}>
-      <ResultPageContent />
+      <ResultContent />
     </Suspense>
   );
 }
@@ -107,8 +53,8 @@ function ResultPageLoading() {
   );
 }
 
-// Actual component content
-function ResultPageContent() {
+// Actual content component that uses useSearchParams
+function ResultContent() {
   const searchParams = useSearchParams();
   const [chartData, setChartData] = useState<
     Array<{
@@ -160,7 +106,7 @@ function ResultPageContent() {
 
     setChartData(data);
 
-    // Find primary and secondary styles
+    // Find primary style
     const sortedStyles = Object.entries(scores).sort((a, b) => b[1] - a[1]);
     if (sortedStyles.length > 0) {
       setPrimaryStyle(sortedStyles[0][0] as StyleKey);
@@ -255,28 +201,6 @@ function ResultPageContent() {
                   <Tooltip contentStyle={{ borderRadius: "8px" }} />
                 </RadarChart>
               </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>
-              Your Primary Style: {styleDescriptions[primaryStyle].name}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <h3 className="font-semibold text-lg mb-1">Description</h3>
-              <p>{styleDescriptions[primaryStyle].description}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-lg mb-1">When to Use</h3>
-              <p>{styleDescriptions[primaryStyle].when_to_use}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-lg mb-1">When to Avoid</h3>
-              <p>{styleDescriptions[primaryStyle].when_to_avoid}</p>
             </div>
           </CardContent>
         </Card>
