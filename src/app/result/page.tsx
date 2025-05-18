@@ -141,7 +141,7 @@ function ResultContent() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-96 w-full">
+            <div className="h-[350px] sm:h-96 w-full">
               <h2 className="text-2xl font-semibold text-center mb-4 text-gray-700">
                 Conflict Management Styles
               </h2>
@@ -149,10 +149,11 @@ function ResultContent() {
                 <RadarChart
                   cx="50%"
                   cy="50%"
-                  outerRadius="65%"
+                  outerRadius="60%"
                   width={500}
                   height={400}
                   data={chartData}
+                  margin={{ top: 10, right: 30, bottom: 10, left: 30 }}
                 >
                   <PolarGrid gridType="polygon" stroke="#ccc" />
                   <PolarAngleAxis
@@ -160,19 +161,26 @@ function ResultContent() {
                     tick={(props) => {
                       const { x, y, textAnchor, payload } = props;
 
-                      // Only adjust the Collaborating label
+                      // Adjust positions for mobile view
+                      let adjustedX = x;
                       let adjustedY = y;
+
+                      // Adjust specific labels that might get cut off
                       if (payload.value === "Collaborating") {
-                        adjustedY = y - 10; // Move up by 10 pixels
+                        adjustedY = y - 10;
+                      } else if (payload.value === "Competing") {
+                        adjustedX = window.innerWidth < 640 ? x + 10 : x;
+                      } else if (payload.value === "Compromising") {
+                        adjustedX = window.innerWidth < 640 ? x - 10 : x;
                       }
 
                       return (
                         <text
-                          x={x}
+                          x={adjustedX}
                           y={adjustedY}
                           textAnchor={textAnchor}
                           fill="#666"
-                          fontSize={12}
+                          fontSize={window.innerWidth < 640 ? 10 : 12}
                         >
                           {payload.value}
                         </text>
